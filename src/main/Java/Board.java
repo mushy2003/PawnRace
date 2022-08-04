@@ -23,7 +23,7 @@ public class Board {
       }
     }
   }
-  
+
   public Optional<Piece> pieceAt(Position position) {
     return Optional.ofNullable(
         boardGrid[position.getRank().getBoardIndex()][position.getFile().getBoardIndex()]);
@@ -44,8 +44,14 @@ public class Board {
   }
 
   public boolean isValidMove(Move move, Move prevMove) {
-    int vertical = move.getEnd().getRankIndex() - move.getStart().getRankIndex();
-    int horizontal = move.getEnd().getFileIndex() - move.getStart().getFileIndex();
+    int currRank = move.getEnd().getRankIndex();
+    int currFile = move.getEnd().getFileIndex();
+    int vertical = currRank - move.getStart().getRankIndex();
+    int horizontal = currFile - move.getStart().getFileIndex();
+
+    if (currRank > 7 || currFile > 7 || currRank < 0 || currFile < 0) {
+      return false;
+    }
 
     switch (move.getMoveType()) {
       case PEACEFUL -> {
@@ -75,8 +81,7 @@ public class Board {
         if (pieceAt(move.getEnd()).isPresent() || prevMove == null) {
           return false;
         }
-        int currRank = move.getEnd().getRankIndex();
-        int currFile = move.getEnd().getFileIndex();
+
         int prevRank = prevMove.getEnd().getRankIndex();
         int prevFile = prevMove.getEnd().getFileIndex();
         int prevVertical = prevRank - prevMove.getStart().getRankIndex();
@@ -119,6 +124,28 @@ public class Board {
     }
 
     return this;
+  }
+
+  public void unApplyMove(Move move) {
+    Position removedPosition = move.getEnd();
+    Position restoredPosition = move.getStart();
+    switch (move.getMoveType()) {
+      case PEACEFUL -> {
+        boardGrid[removedPosition.getRankIndex()][removedPosition.getFileIndex()] = null;
+      }
+      case CAPTURE -> {
+        boardGrid[removedPosition.getRankIndex()][removedPosition.getFileIndex()] = move.getPiece().getOpposite();
+      }
+      case EN_PASSANT -> {
+        boardGrid[removedPosition.getRankIndex()][removedPosition.getFileIndex()] = null;
+        if (move.getPiece() == Piece.WHITE) {
+          boardGrid[removedPosition.getRankIndex() - 1][removedPosition.getFileIndex()] = Piece.BLACK;
+        } else {
+          boardGrid[removedPosition.getRankIndex() + 1][removedPosition.getFileIndex()] = Piece.WHITE;
+        }
+      }
+    }
+    boardGrid[restoredPosition.getRankIndex()][restoredPosition.getFileIndex()] = move.getPiece();
   }
 
   @Override
