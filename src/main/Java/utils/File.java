@@ -5,10 +5,10 @@ public final class File {
 
   public File(char columnLetter) {
     assert (columnLetter >= 'a' && columnLetter <= 'h');
-    this.columnLetter = columnLetter;
+    this.columnLetter = Character.toLowerCase(columnLetter);
   }
 
-  public int getBoardIndex(char columnLetter) {
+  public int getBoardIndex() {
     return columnLetter - 'a';
   }
 

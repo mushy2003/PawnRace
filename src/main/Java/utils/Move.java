@@ -4,7 +4,6 @@ public class Move {
 
   private final Piece piece;
   private final Position start;
-
   private final Position end;
   private final MoveType moveType;
 
@@ -34,6 +33,10 @@ public class Move {
 
   public Position getEnd() {
     return end;
+  }
+
+  public MoveType getMoveType() {
+    return moveType;
   }
 
   public enum MoveType {

@@ -9,8 +9,25 @@ public class Position {
     rank = new Rank(Integer.parseInt(String.valueOf(position.charAt(1))));
   }
 
+  public Position(int rankIndex, int fileIndex) {
+    file = new File((char) ('a' + fileIndex));
+    rank = new Rank(rankIndex + 1);
+  }
+
   public File getFile() {
     return file;
+  }
+
+  public Rank getRank() {
+    return rank;
+  }
+
+  public int getFileIndex() {
+    return file.getBoardIndex();
+  }
+
+  public int getRankIndex() {
+    return rank.getBoardIndex();
   }
 
   @Override
