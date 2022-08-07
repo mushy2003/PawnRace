@@ -3,10 +3,7 @@ import utils.Move.MoveType;
 import utils.Piece;
 import utils.Position;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public final class Game {
 
@@ -16,6 +13,14 @@ public final class Game {
 
   public Game(Board board, Player currentPlayer) {
     this.board = board;
+    this.currentPlayer = currentPlayer;
+  }
+
+  public Player getCurrentPlayer() {
+    return currentPlayer;
+  }
+
+  public void setCurrentPlayer(Player currentPlayer) {
     this.currentPlayer = currentPlayer;
   }
 
@@ -42,11 +47,16 @@ public final class Game {
       validMoves(position, allValidMoves);
     }
 
+    allValidMoves.removeAll(Collections.singletonList(null));
+
     return allValidMoves;
   }
 
   public boolean gameOver() {
-    return (allValidMoves(Piece.WHITE).isEmpty() || allValidMoves(Piece.BLACK).isEmpty());
+    return (allValidMoves(Piece.WHITE).isEmpty()
+        || allValidMoves(Piece.BLACK).isEmpty()
+        || whitePromoted()
+        || blackPromoted());
   }
 
   public Player winner() {
@@ -55,17 +65,64 @@ public final class Game {
     if (allValidMoves(Piece.WHITE).isEmpty() && allValidMoves(Piece.BLACK).isEmpty()) {
       // Stalemate.
       return null;
-    }
-
-    if (allValidMoves(currentPlayer.getPiece()).isEmpty()) {
+    } else if (allValidMoves(currentPlayer.getPiece()).isEmpty()) {
+      return currentPlayer.getOpponent();
+    } else if (allValidMoves(currentPlayer.getOpponent().getPiece()).isEmpty()) {
       return currentPlayer;
     }
 
-    return currentPlayer.getOpponent();
+    return (currentPlayer.getPiece() == Piece.WHITE && whitePromoted())
+        ? currentPlayer
+        : currentPlayer.getOpponent();
   }
 
   public Move parseMove(String san) {
-    //TODO
+    Piece piece = this.currentPlayer.getPiece();
+    Position start;
+    Position end;
+    MoveType moveType;
+    Move result;
+
+    if (san.length() == 2) {
+      moveType = MoveType.PEACEFUL;
+      end = new Position(san);
+
+      int oldRank = (piece == Piece.WHITE) ? end.getRankIndex() - 1 : end.getRankIndex() + 1;
+      start = new Position(oldRank, end.getFileIndex());
+      result = new Move(piece, start, end, moveType);
+      if (board.isValidMove(result, moves.peekFirst())) {
+        return result;
+      }
+
+      if (end.getRankIndex() == 3 && piece == Piece.WHITE
+          || (end.getRankIndex() == 4 && piece == Piece.BLACK)) {
+        // So possible to move from start position 2 steps
+        oldRank = (piece == Piece.WHITE) ? oldRank - 1 : oldRank + 1;
+        start = new Position(oldRank, end.getFileIndex());
+        result = new Move(piece, start, end, moveType);
+        if (board.isValidMove(result, moves.peekFirst())) {
+          return result;
+        }
+      }
+
+      return null;
+    }
+
+    end = new Position(san.substring(2));
+    int oldFileIndex = san.charAt(0) - 'a';
+    int oldRankIndex = (piece == Piece.WHITE) ? end.getRankIndex() - 1 : end.getRankIndex() + 1;
+    start = new Position(oldRankIndex, oldFileIndex);
+    result = new Move(piece, start, end, MoveType.CAPTURE);
+    if (board.isValidMove(result, moves.peekFirst())) {
+      return result;
+    }
+
+    result.setMoveType(MoveType.EN_PASSANT);
+
+    if (board.isValidMove(result, moves.peekFirst())) {
+      return result;
+    }
+
     return null;
   }
 
@@ -77,7 +134,6 @@ public final class Game {
     allValidMoves.add(moveDiagonal(position, false, true, piece, MoveType.CAPTURE));
     allValidMoves.add(moveDiagonal(position, true, false, piece, MoveType.EN_PASSANT));
     allValidMoves.add(moveDiagonal(position, false, true, piece, MoveType.EN_PASSANT));
-
   }
 
   private Move moveForwardBy(Position position, int steps, Piece piece) {
@@ -91,7 +147,8 @@ public final class Game {
     return null;
   }
 
-  private Move moveDiagonal(Position position, boolean isLeft, boolean isRight, Piece piece, MoveType moveType) {
+  private Move moveDiagonal(
+      Position position, boolean isLeft, boolean isRight, Piece piece, MoveType moveType) {
     int horizontalSteps = (isLeft) ? -1 : 1;
     int verticalSteps = (piece == Piece.WHITE) ? 1 : -1;
 
@@ -99,7 +156,8 @@ public final class Game {
         new Move(
             piece,
             position,
-            new Position(position.getRankIndex() + verticalSteps, position.getFileIndex() + horizontalSteps),
+            new Position(
+                position.getRankIndex() + verticalSteps, position.getFileIndex() + horizontalSteps),
             moveType);
 
     if (board.isValidMove(newMove, moves.peekFirst())) {
@@ -107,5 +165,27 @@ public final class Game {
     }
 
     return null;
+  }
+
+  private boolean blackPromoted() {
+    List<Position> blackPositions = board.positionsOf(Piece.BLACK);
+    for (Position blackPosition : blackPositions) {
+      if (blackPosition.getRankIndex() == 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean whitePromoted() {
+    List<Position> whitePositions = board.positionsOf(Piece.WHITE);
+    for (Position whitePosition : whitePositions) {
+      if (whitePosition.getRankIndex() == 7) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

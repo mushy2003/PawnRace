@@ -5,7 +5,7 @@ public class Move {
   private final Piece piece;
   private final Position start;
   private final Position end;
-  private final MoveType moveType;
+  private MoveType moveType;
 
   public Move(Piece piece, Position start, Position end, MoveType moveType) {
     this.piece = piece;
@@ -37,6 +37,10 @@ public class Move {
 
   public MoveType getMoveType() {
     return moveType;
+  }
+
+  public void setMoveType(MoveType moveType) {
+    this.moveType = moveType;
   }
 
   public enum MoveType {

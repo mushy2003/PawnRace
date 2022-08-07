@@ -1,8 +1,15 @@
 package pawnrace
 
+import Board
+import Player
+import Game
+import utils.*
+import utils.File
 import java.io.PrintWriter
 import java.io.InputStreamReader
 import java.io.BufferedReader
+import java.util.Scanner
+
 
 // You should not add any more member values or member functions to this class
 // (or change its name!). The autorunner will load it in via reflection and it
@@ -24,7 +31,6 @@ class PawnRace {
 
     // Now you may construct your initial board
     // TODO: Initialise the board state
-
     // If you are the white player, you are now allowed to move
     // you may send your move, once you have decided what it will be, with output.println(move)
     // for example: output.println("axb4")
@@ -53,5 +59,58 @@ class PawnRace {
 
 // When running the command, provide an argument either W or B, this indicates your player colour
 fun main(args: Array<String>) {
-  PawnRace().playGame(args[0][0], PrintWriter(System.out, true), BufferedReader(InputStreamReader(System.`in`)))
+  //PawnRace().playGame(args[0][0], PrintWriter(System.out, true), BufferedReader(InputStreamReader(System.`in`)))
+
+  val scanner = Scanner(System.`in`)
+  print("Enter white gap.. between a to h inclusive: ")
+  val whiteGap = scanner.nextLine()
+  print("Enter black gap.. between a to h inclusive: ")
+  val blackGap = scanner.nextLine()
+
+  val board = Board(File(whiteGap.first()), File(blackGap.first()))
+  val game = Game(board, null)
+  val whitePlayer = Player(Piece.WHITE, null, board, game)
+  val blackPlayer = Player(Piece.BLACK, whitePlayer, board, game)
+  whitePlayer.opponent = blackPlayer
+  game.currentPlayer = whitePlayer
+
+
+  var text : Char
+  do {
+    println("Is AIPlayer white or black? (W/B)")
+    text = Character.toUpperCase(scanner.nextLine().first())
+  } while (text != 'W' && text != 'B')
+  val aiPlayer = if (text == 'W') whitePlayer else blackPlayer
+
+
+
+
+  do {
+    println(board)
+
+    if (game.currentPlayer != aiPlayer) {
+      var move : Move?
+      do {
+        print("Enter your next move: ")
+        val san = scanner.nextLine()
+        move = game.parseMove(san)
+        if (move != null) {
+          game.applyMove(move)
+        }
+      } while (move == null)
+    } else {
+      aiPlayer.makeMove(game)
+    }
+  } while (!game.gameOver())
+
+  println(board)
+
+  val winningPlayer = game.winner()
+  if (winningPlayer == null) {
+    println("It's a stalemate.")
+  } else if (winningPlayer == whitePlayer) {
+    println("White wins!")
+  } else {
+    println("Black wins!")
+  }
 }

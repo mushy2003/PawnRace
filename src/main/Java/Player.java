@@ -3,13 +3,14 @@ import utils.Piece;
 import utils.Position;
 
 import java.util.List;
+import java.util.Random;
 
 public class Player {
 
   private final Piece piece;
-  private Player opponent;
   private final Board board;
   private final Game game;
+  private Player opponent;
 
   public Player(Piece piece, Player opponent, Board board, Game game) {
     this.piece = piece;
@@ -45,12 +46,20 @@ public class Player {
   }
 
   public Move makeMove(Game game) {
-    //TODO
-    return null;
+    List<Move> validMoves = getAllValidMoves();
+    Random generator = new Random();
+    Move randomMove = validMoves.get(generator.nextInt(validMoves.size() - 1));
+    System.out.println("Ai played the move: " + randomMove);
+    game.applyMove(randomMove);
+    return randomMove;
   }
 
   public Player getOpponent() {
     return opponent;
+  }
+
+  public void setOpponent(Player opponent) {
+    this.opponent = opponent;
   }
 
   public Piece getPiece() {
