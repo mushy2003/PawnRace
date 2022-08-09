@@ -53,7 +53,6 @@ public class Board {
       return false;
     }
 
-    // Need to also check if there actually is a piece from where we are moving from.
     if (pieceAt(move.getStart()).isEmpty() || pieceAt(move.getStart()).get() != move.getPiece()) {
       return false;
     }
@@ -63,7 +62,6 @@ public class Board {
           return false;
         }
         if (move.getPiece() == Piece.WHITE) {
-          //prevMove may not be null but the pawn could still be at the start position.. need to fix.
           return (move.getStart().getRankIndex() == 1 && vertical <= 2 && vertical > 0 && horizontal == 0)
                   || (vertical == 1 && horizontal == 0);
         } else {
@@ -156,7 +154,6 @@ public class Board {
 
   @Override
   public String toString() {
-    // NEED TO CHECK AND TEST.
     StringBuilder sb = new StringBuilder();
     sb.append("   A B C D E F G H  \n");
 

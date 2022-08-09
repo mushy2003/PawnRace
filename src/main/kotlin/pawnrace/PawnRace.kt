@@ -62,10 +62,19 @@ fun main(args: Array<String>) {
   //PawnRace().playGame(args[0][0], PrintWriter(System.out, true), BufferedReader(InputStreamReader(System.`in`)))
 
   val scanner = Scanner(System.`in`)
-  print("Enter white gap.. between a to h inclusive: ")
-  val whiteGap = scanner.nextLine()
-  print("Enter black gap.. between a to h inclusive: ")
-  val blackGap = scanner.nextLine()
+
+  var whiteGap : String
+  var blackGap : String
+  do {
+    print("Enter white gap.. between a to h inclusive: ")
+    whiteGap = scanner.nextLine()
+  } while (Character.toLowerCase(whiteGap.first()) < 'a' || Character.toLowerCase(whiteGap.first()) > 'h')
+
+
+  do {
+    print("Enter black gap.. between a to h inclusive: ")
+    blackGap = scanner.nextLine()
+  } while (Character.toLowerCase(blackGap.first()) < 'a' || Character.toLowerCase(blackGap.first()) > 'h')
 
   val board = Board(File(whiteGap.first()), File(blackGap.first()))
   val game = Game(board, null)
@@ -96,6 +105,7 @@ fun main(args: Array<String>) {
         move = game.parseMove(san)
         if (move != null) {
           game.applyMove(move)
+          println("User played the move: " + move)
         }
       } while (move == null)
     } else {
