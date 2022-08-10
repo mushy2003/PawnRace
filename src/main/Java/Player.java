@@ -79,7 +79,8 @@ public class Player {
 
     for (Move move : moves) {
       game.applyMove(move);
-      int currentScore = minimax(6, Integer.MIN_VALUE, Integer.MAX_VALUE, currentPlayer.getOpponent());
+      int currentScore =
+          minimax(7, Integer.MIN_VALUE, Integer.MAX_VALUE, currentPlayer.getOpponent());
       if (currentScore > maxScore) {
         maxScore = currentScore;
         bestMove = move;
@@ -111,7 +112,6 @@ public class Player {
       }
 
       return evaluateScore(currentPlayer) * -1;
-      //return board.positionsOf(Piece.WHITE).size() - board.positionsOf(Piece.BLACK).size();
     }
 
     if (currentPlayer.piece == Piece.WHITE) {
@@ -155,15 +155,14 @@ public class Player {
     Player opponent = currentPlayer.opponent;
     List<Position> positions = board.positionsOf(piece);
 
-    int currentScore = board.positionsOf(piece).size() - board.positionsOf(piece.getOpposite()).size();
+    int currentScore =
+        board.positionsOf(piece).size() - board.positionsOf(piece.getOpposite()).size();
     currentScore += (currentPlayer.numberOfPassedPawns() - opponent.numberOfPassedPawns()) * 10;
 
     for (Position position : positions) {
       if (piece == Piece.WHITE && position.getRankIndex() >= 5) {
         currentScore += 100;
       }
-
-
 
       if (piece == Piece.BLACK && position.getRankIndex() <= 2) {
         currentScore += 100;
@@ -180,7 +179,10 @@ public class Player {
     List<Position> positions = board.positionsOf(piece);
 
     for (Position position : positions) {
-      if (position.getRankIndex() < board.MAXINDEX && position.getRankIndex() >= 1 && position.getFileIndex() >= 1 && position.getFileIndex() < board.MAXINDEX) {
+      if (position.getRankIndex() < board.MAXINDEX
+          && position.getRankIndex() >= 1
+          && position.getFileIndex() >= 1
+          && position.getFileIndex() < board.MAXINDEX) {
         count += pawnChains(position, piece);
       }
     }
