@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class Board {
 
-  private final int MAXINDEX = 7;
+  public final int MAXINDEX = 7;
   private final Piece[][] boardGrid = new Piece[MAXINDEX + 1][MAXINDEX + 1];
 
   public Board(File whiteGap, File blackGap) {

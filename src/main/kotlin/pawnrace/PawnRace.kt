@@ -108,6 +108,7 @@ fun main(args: Array<String>) {
           println("User played the move: " + move)
         }
       } while (move == null)
+      //game.currentPlayer.makeRandomMove(game);
     } else {
       aiPlayer.makeMove(game)
     }

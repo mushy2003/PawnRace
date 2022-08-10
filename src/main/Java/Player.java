@@ -62,14 +62,14 @@ public class Player {
     return true;
   }
 
-//  public Move makeMove(Game game) {
-//    List<Move> validMoves = getAllValidMoves();
-//    Random generator = new Random();
-//    Move randomMove = validMoves.get(generator.nextInt(validMoves.size() - 1));
-//    System.out.println("Ai played the move: " + randomMove);
-//    game.applyMove(randomMove);
-//    return randomMove;
-//  }
+  public Move makeRandomMove(Game game) {
+    List<Move> validMoves = getAllValidMoves();
+    Random generator = new Random();
+    Move randomMove = validMoves.get(generator.nextInt(validMoves.size() - 1));
+    System.out.println("Ai played the move: " + randomMove);
+    game.applyMove(randomMove);
+    return randomMove;
+  }
 
   public Move makeMove(Game game) {
     List<Move> moves = getAllValidMoves();
@@ -79,7 +79,7 @@ public class Player {
 
     for (Move move : moves) {
       game.applyMove(move);
-      int currentScore = minimax(8, Integer.MIN_VALUE, Integer.MAX_VALUE, currentPlayer.getOpponent());
+      int currentScore = minimax(6, Integer.MIN_VALUE, Integer.MAX_VALUE, currentPlayer.getOpponent());
       if (currentScore > maxScore) {
         maxScore = currentScore;
         bestMove = move;
@@ -170,7 +170,48 @@ public class Player {
       }
     }
 
+    currentScore += numberOfPawnChains(currentPlayer.piece);
+
     return currentScore;
+  }
+
+  private int numberOfPawnChains(Piece piece) {
+    int count = 0;
+    List<Position> positions = board.positionsOf(piece);
+
+    for (Position position : positions) {
+      if (position.getRankIndex() < board.MAXINDEX && position.getRankIndex() >= 1 && position.getFileIndex() >= 1 && position.getFileIndex() < board.MAXINDEX) {
+        count += pawnChains(position, piece);
+      }
+    }
+
+    return count;
+  }
+
+  private int pawnChains(Position position, Piece piece) {
+    int count = 0;
+    Position pos1 = new Position(position.getRankIndex() - 1, position.getFileIndex() - 1);
+    Position pos2 = new Position(position.getRankIndex() - 1, position.getFileIndex() + 1);
+    Position pos3 = new Position(position.getRankIndex() + 1, position.getFileIndex() - 1);
+    Position pos4 = new Position(position.getRankIndex() + 1, position.getFileIndex() + 1);
+
+    if (board.pieceAt(pos1).orElse(piece.getOpposite()) == piece) {
+      count++;
+    }
+
+    if (board.pieceAt(pos2).orElse(piece.getOpposite()) == piece) {
+      count++;
+    }
+
+    if (board.pieceAt(pos3).orElse(piece.getOpposite()) == piece) {
+      count++;
+    }
+
+    if (board.pieceAt(pos4).orElse(piece.getOpposite()) == piece) {
+      count++;
+    }
+
+    return count;
   }
 
   public Player getOpponent() {
