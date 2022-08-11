@@ -59,21 +59,20 @@ public final class Game {
         || blackPromoted());
   }
 
-  public Player winner() {
+  public Piece winner() {
     assert (gameOver());
-
-    if (allValidMoves(Piece.WHITE).isEmpty() && allValidMoves(Piece.BLACK).isEmpty()) {
+    if (whitePromoted()) {
+      return Piece.WHITE;
+    } else if (blackPromoted()) {
+      return Piece.BLACK;
+    } else if (allValidMoves(Piece.WHITE).isEmpty() && allValidMoves(Piece.BLACK).isEmpty()) {
       // Stalemate.
       return null;
-    } else if (allValidMoves(currentPlayer.getPiece()).isEmpty()) {
-      return currentPlayer.getOpponent();
-    } else if (allValidMoves(currentPlayer.getOpponent().getPiece()).isEmpty()) {
-      return currentPlayer;
+    } else if (allValidMoves(Piece.WHITE).isEmpty()) {
+      return Piece.BLACK;
+    } else {
+      return Piece.WHITE;
     }
-
-    return (currentPlayer.getPiece() == Piece.WHITE && whitePromoted())
-        ? currentPlayer
-        : currentPlayer.getOpponent();
   }
 
   public Move parseMove(String san) {

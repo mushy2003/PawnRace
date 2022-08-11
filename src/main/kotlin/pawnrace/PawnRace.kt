@@ -9,10 +9,11 @@ import java.io.PrintWriter
 import java.io.InputStreamReader
 import java.io.BufferedReader
 import java.util.Scanner
-
-// When running the command, provide an argument either W or B, this indicates your player colour
 fun main(args: Array<String>) {
-  //PawnRace().playGame(args[0][0], PrintWriter(System.out, true), BufferedReader(InputStreamReader(System.`in`)))
+
+  println("Welcome to Pawn Race!!!")
+
+  println("If you want a harder game try choosing the same white and black gap.")
 
   val scanner = Scanner(System.`in`)
 
@@ -43,16 +44,20 @@ fun main(args: Array<String>) {
 
     if (game.currentPlayer != aiPlayer) {
       var move : Move?
+      move = null
       do {
-        print("Enter your next move: ")
-        val san = scanner.nextLine()
-        move = game.parseMove(san)
+        try {
+          print("Enter your next move: ")
+          val san = scanner.nextLine()
+          move = game.parseMove(san)
+        } catch (e: Exception) {
+          println("Please make sure the move you typed is in the correct format.. letter before number.")
+        }
         if (move != null) {
           game.applyMove(move)
           println("User played the move: " + move)
         }
       } while (move == null)
-      //game.currentPlayer.makeRandomMove(game);
     } else {
       aiPlayer.makeMove(game)
     }
@@ -63,7 +68,7 @@ fun main(args: Array<String>) {
   val winningPlayer = game.winner()
   if (winningPlayer == null) {
     println("It's a stalemate.")
-  } else if (winningPlayer == whitePlayer) {
+  } else if (winningPlayer == Piece.WHITE) {
     println("White wins!")
   } else {
     println("Black wins!")

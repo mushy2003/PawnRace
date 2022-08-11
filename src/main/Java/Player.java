@@ -98,11 +98,11 @@ public class Player {
       return 0;
     }
 
-    if (currentPlayer.game.gameOver() && game.winner().piece == Piece.WHITE) {
+    if (currentPlayer.game.gameOver() && game.winner() == Piece.WHITE) {
       return 100000;
     }
 
-    if (currentPlayer.game.gameOver() && game.winner().piece == Piece.BLACK) {
+    if (currentPlayer.game.gameOver() && game.winner() == Piece.BLACK) {
       return -100000;
     }
 
