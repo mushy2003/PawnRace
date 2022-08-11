@@ -24,7 +24,9 @@ PawnRace is a game that involves a chess board with only pawns on it. The aim of
 
 * A game can result in a stalemate if both players have no more valid moves left to play. This happens when all the pawns of both players are blocked from moving.
 
+## AI Details
 
+The AI was implemented using the minimax algorithm with alpha-beta pruning. The alpha-beta pruning in particular is incredibly useful to allow the AI to search deep within the game tree efficiently. The AI searchs up to 7 moves ahead in the game and uses an evaluation function which employs a wide variety of heuristics to output a current score that the algorithm then uses to find the best possible move.
 
 
 
