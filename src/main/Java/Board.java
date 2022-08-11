@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class Board {
 
-  private final int MAXINDEX = 7;
+  public final int MAXINDEX = 7;
   private final Piece[][] boardGrid = new Piece[MAXINDEX + 1][MAXINDEX + 1];
 
   public Board(File whiteGap, File blackGap) {
@@ -131,25 +131,25 @@ public class Board {
   }
 
   public void unApplyMove(Move move) {
-    Position removedPosition = move.getEnd();
-    Position restoredPosition = move.getStart();
-    switch (move.getMoveType()) {
-      case PEACEFUL -> {
-        boardGrid[removedPosition.getRankIndex()][removedPosition.getFileIndex()] = null;
-      }
-      case CAPTURE -> {
-        boardGrid[removedPosition.getRankIndex()][removedPosition.getFileIndex()] = move.getPiece().getOpposite();
-      }
-      case EN_PASSANT -> {
-        boardGrid[removedPosition.getRankIndex()][removedPosition.getFileIndex()] = null;
-        if (move.getPiece() == Piece.WHITE) {
-          boardGrid[removedPosition.getRankIndex() - 1][removedPosition.getFileIndex()] = Piece.BLACK;
-        } else {
-          boardGrid[removedPosition.getRankIndex() + 1][removedPosition.getFileIndex()] = Piece.WHITE;
-        }
+    int newRankIndex = move.getEnd().getRankIndex();
+    int newFileIndex = move.getEnd().getFileIndex();
+    int oldRankIndex = move.getStart().getRankIndex();
+    int oldFileIndex = move.getStart().getFileIndex();
+
+    boardGrid[newRankIndex][newFileIndex] = null;
+    if (move.getMoveType() == Move.MoveType.CAPTURE) {
+      boardGrid[newRankIndex][newFileIndex] = move.getPiece().getOpposite();
+    }
+
+    if (move.getMoveType() == Move.MoveType.EN_PASSANT) {
+      if (move.getPiece() == Piece.WHITE) {
+        boardGrid[newRankIndex - 1][newFileIndex] = Piece.BLACK;
+      } else {
+        boardGrid[newRankIndex + 1][newFileIndex] = Piece.WHITE;
       }
     }
-    boardGrid[restoredPosition.getRankIndex()][restoredPosition.getFileIndex()] = move.getPiece();
+
+    boardGrid[oldRankIndex][oldFileIndex] = move.getPiece();
   }
 
   @Override
