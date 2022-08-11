@@ -3,8 +3,6 @@
 ## Introdution
 PawnRace is a game that involves a chess board with only pawns on it. The aim of the game is to be the first player to get one of your pawns to the other side of the board. In this specific version of PawnRace you play against the AI which uses the Minimax algorithm along with Alpha-Beta pruning to search the game tree.
 
-Pull requests welcome to correct any spotted bugs.
-
 ## How To Play
 
 * The AI will play with the white pawns and start first. You will play as the black pawns.
